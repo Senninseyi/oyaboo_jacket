@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "oyaboo_jacket",
-    "slug": "oyaboo_jacket",
+    "slug": "oy-aboo-jacket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.oyaboo.jacket"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "88685672-8868-4152-a5e2-304048d67119"
+      }
+    },
+    "owner": "senninseyi"
   }
 }
