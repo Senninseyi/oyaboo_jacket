@@ -190,7 +190,6 @@ function JacketAllocationScreen(): JSX.Element {
                       inputMode="numeric"
                       maxLength={8}
                       keyboardType="numeric"
-                      left={<TextInput.Affix text={`OY-NG-`} />}
                       textInputStyle={{
                         borderColor:
                           formik.touched.temporary_registeration_id &&
@@ -210,9 +209,8 @@ function JacketAllocationScreen(): JSX.Element {
                           ? formik.errors.security_id
                           : null
                       }
-                      inputMode="numeric"
-                      maxLength={5}
-                      keyboardType="numeric"
+                      inputMode="text"
+                      keyboardType="name-phone-pad"
                       textInputStyle={{
                         borderColor:
                           formik.touched.security_id &&
@@ -276,7 +274,6 @@ function JacketAllocationScreen(): JSX.Element {
                           text="Allocate Jacket"
                           disabled={loading}
                           loading={loading}
-                          
                           onPress={() => handleAllocateJacket()}
                         />
                       </View>
@@ -352,8 +349,8 @@ const style = StyleSheet.create({
   },
 
   oyo: {
-    width: 115.19,
-    height: 112,
+    width: 200,
+    height: 200,
   },
 
   details: {
