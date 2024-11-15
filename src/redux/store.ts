@@ -1,8 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   persistStore,
-  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -14,16 +12,9 @@ import {
 import AuthReducer from "./slices/authSlice";
 import AppReducer from "./slices/appSlice";
 
-const authPersistConfig = {
-  key: "root",
-  storage: AsyncStorage,
-};
-
-const persistedAuthReducer = persistReducer(authPersistConfig, AuthReducer);
-
 export const store = configureStore({
   reducer: {
-    auth: persistedAuthReducer,
+    auth: AuthReducer,
     app: AppReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -35,7 +26,6 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

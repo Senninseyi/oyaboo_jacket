@@ -15,7 +15,6 @@ import AppDarkButton from "../components/buttons/appDarkButton";
 import { Progress } from "../components/progress/progress";
 import { useAppSelector, useAppDispatch } from "../redux/hooks/hooks";
 import { MembershipValidationSchema } from "../schema/schema";
-import { TextInput } from "react-native-paper";
 import { setRegisterationTabs } from "../redux/slices/appSlice";
 import AppService from "../services/app.service";
 
@@ -165,22 +164,23 @@ function JacketAllocationScreen(): JSX.Element {
                   <AppText
                     text={
                       registerationTabs === 1
-                        ? "Membership ID"
+                        ? "Allocation Details"
                         : registerationTabs === 2
                         ? "Member’s Personal Details "
-                        : "Membership ID"
+                        : "Allocation Details"
                     }
                     style={style.membership_title}
                   />
 
                   <View style={{ gap: 25 }}>
                     <AppTextInput
-                      label="Oyo State  Temporary Registration ID"
+                      label="Member ID"
                       onChangeText={formik.handleChange(
                         "temporary_registeration_id"
                       )}
                       value={formik.values.temporary_registeration_id}
                       onBlur={formik.handleBlur("temporary_registeration_id")}
+                      placeholder="Enter a Member's ID"
                       errorMessage={
                         formik.errors.temporary_registeration_id &&
                         formik.touched.temporary_registeration_id
@@ -201,8 +201,21 @@ function JacketAllocationScreen(): JSX.Element {
 
                     <AppTextInput
                       label="Security ID"
-                      onChangeText={formik.handleChange("security_id")}
+                      onChangeText={(text) => {
+                        const formatted = text
+                          .toUpperCase()
+                          .replace(/[^A-Z0-9-]/g, "");
+                        if (!formatted.includes("-") && formatted.length > 2) {
+                          formik.setFieldValue(
+                            "security_id",
+                            `${formatted.slice(0, 2)}-${formatted.slice(2)}`
+                          );
+                        } else {
+                          formik.setFieldValue("security_id", formatted);
+                        }
+                      }}
                       value={formik.values.security_id}
+                      placeholder="Enter a Security ID"
                       onBlur={formik.handleBlur("security_id")}
                       errorMessage={
                         formik.errors.security_id && formik.touched.security_id
@@ -211,6 +224,7 @@ function JacketAllocationScreen(): JSX.Element {
                       }
                       inputMode="text"
                       keyboardType="name-phone-pad"
+                      maxLength={7}
                       textInputStyle={{
                         borderColor:
                           formik.touched.security_id &&

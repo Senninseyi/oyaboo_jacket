@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { useFormik } from "formik";
-
 import { TextInput } from "react-native-paper";
-import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import AppColorConstants from "../../constants/app_color_constants";
 import StyleConstants from "../../constants/app_style_constants";
@@ -15,7 +12,7 @@ import AppDarkButton from "../../components/buttons/appDarkButton";
 import AuthService from "../../services/auth.service";
 
 import { LoginValidationSchema } from "../../schema/schema";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
+import { useAppDispatch } from "../../redux/hooks/hooks";
 import { updateUserData, updateUserToken } from "../../redux/slices/authSlice";
 
 type InitialState = {
@@ -24,9 +21,6 @@ type InitialState = {
 };
 
 function LoginScreen(): JSX.Element {
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
-  const { lga } = useAppSelector((l) => l.auth);
   const dispatch = useAppDispatch();
 
   const [showPassowrd, setShowPassword] = useState<boolean>(false);
@@ -126,7 +120,7 @@ function LoginScreen(): JSX.Element {
                 text="Agent's Login"
                 activeOpacity={0.6}
                 loading={loading}
-                disabled={!formik.isValid}
+                disabled={!formik.isValid || loading}
                 onPress={() => {
                   if (!formik.isValidating && formik.touched) {
                     formik.handleSubmit();

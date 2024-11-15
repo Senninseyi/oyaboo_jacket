@@ -1,10 +1,7 @@
 import axios from "axios";
 import { store } from "../redux/store";
-import { Alert } from "react-native";
 import { showErrorNotifcation } from "../components/inappnotifications/error";
 import { updateUserToken } from "../redux/slices/authSlice";
-
-// import {showNotification} from '../utils/notification-utils';
 
 const setAuthToken = async () => {
   const token = store.getState().auth.token;
