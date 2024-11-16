@@ -91,7 +91,6 @@ function JacketAllocationScreen(): JSX.Element {
     const data: SecurityData | any = await AppService.addSecurityIDToMember(
       payload
     );
-    console.log(data);
     setLoading(false);
     switch (data?.status) {
       case "400":
