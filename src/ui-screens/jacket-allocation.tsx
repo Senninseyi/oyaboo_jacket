@@ -17,7 +17,6 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks/hooks";
 import { MembershipValidationSchema } from "../schema/schema";
 import { setRegisterationTabs } from "../redux/slices/appSlice";
 import AppService from "../services/app.service";
-import { err } from "react-native-svg";
 
 interface InitialState {
   temporary_registeration_id: string;
