@@ -28,6 +28,7 @@ interface SecurityData {
   unitEntity: UnitEntity;
   isJacketAllocated: boolean;
   isActive: boolean;
+  photoReference: string | null;
 }
 
 interface AssociationEntity {

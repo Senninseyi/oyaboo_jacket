@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { useFormik } from "formik";
-
 import { TextInput } from "react-native-paper";
-import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import AppColorConstants from "../../constants/app_color_constants";
 import StyleConstants from "../../constants/app_style_constants";
@@ -15,7 +12,7 @@ import AppDarkButton from "../../components/buttons/appDarkButton";
 import AuthService from "../../services/auth.service";
 
 import { LoginValidationSchema } from "../../schema/schema";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
+import { useAppDispatch } from "../../redux/hooks/hooks";
 import { updateUserData, updateUserToken } from "../../redux/slices/authSlice";
 
 type InitialState = {
@@ -24,13 +21,14 @@ type InitialState = {
 };
 
 function LoginScreen(): JSX.Element {
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
-  const { lga } = useAppSelector((l) => l.auth);
   const dispatch = useAppDispatch();
 
   const [showPassowrd, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setShowErrors] = useState<InitialState>({
+    username: "",
+    password: "",
+  });
 
   const form: InitialState = {
     password: "",
@@ -45,19 +43,40 @@ function LoginScreen(): JSX.Element {
     };
 
     const data = await AuthService.login(payload);
-    if (data) {
-      dispatch(updateUserToken(data?.token));
-      dispatch(updateUserData(data));
 
-      setLoading(false);
-    } else {
-      setLoading(false);
+    switch (data?.status) {
+      case "404":
+        setLoading(false);
+        formik.setFieldTouched("username", true);
+        formik.setFieldError("username", data?.message);
+        setShowErrors({
+          username: data?.message,
+          password: "",
+        });
+        break;
+      case "400":
+        setLoading(false);
+        if (data?.message === "You have entered an invalid password") {
+          formik.setFieldTouched("password", true);
+          formik.setFieldError("password", "Invalid password");
+          setShowErrors({
+            username: "",
+            password: "Invalid password",
+          });
+        }
+        break;
+      default:
+        setLoading(false);
+        dispatch(updateUserToken(data?.token));
+        dispatch(updateUserData(data));
+        break;
     }
   };
 
   const formik = useFormik({
     initialValues: form,
     validationSchema: LoginValidationSchema,
+    enableReinitialize: false,
     onSubmit: handleLogin,
   });
 
@@ -80,15 +99,21 @@ function LoginScreen(): JSX.Element {
               <View style={{ gap: 25 }}>
                 <AppTextInput
                   label="Username"
-                  onChangeText={formik.handleChange("username")}
+                  onChangeText={(text: string) => {
+                    formik.setFieldValue("username", text);
+                    setShowErrors({
+                      ...errors,
+                      username: "",
+                    });
+                  }}
                   onBlur={formik.handleBlur("username")}
                   value={formik.values.username}
-                  autoFocus={true}
                   errorMessage={
                     formik.touched.username && formik.errors.username
                       ? formik.errors.username
-                      : null
+                      : errors.username
                   }
+                  autoFocus={true}
                   textInputStyle={{
                     borderColor:
                       formik.touched.username && formik.errors.username
@@ -99,13 +124,19 @@ function LoginScreen(): JSX.Element {
 
                 <AppTextInput
                   label="Password"
-                  onChangeText={formik.handleChange("password")}
+                  onChangeText={(text) => {
+                    formik.setFieldValue("password", text);
+                    setShowErrors({
+                      ...errors,
+                      password: "",
+                    });
+                  }}
                   onBlur={formik.handleBlur("password")}
                   value={formik.values.password}
                   errorMessage={
                     formik.touched.password && formik.errors.password
                       ? formik.errors.password
-                      : null
+                      : errors.password
                   }
                   textInputStyle={{
                     borderColor:
@@ -123,10 +154,10 @@ function LoginScreen(): JSX.Element {
                 />
               </View>
               <AppDarkButton
-                text="Agent's Login"
+                text="Login"
                 activeOpacity={0.6}
                 loading={loading}
-                disabled={!formik.isValid}
+                disabled={!formik.isValid || loading}
                 onPress={() => {
                   if (!formik.isValidating && formik.touched) {
                     formik.handleSubmit();
