@@ -149,8 +149,6 @@ function JacketAllocationScreen(): JSX.Element {
     }
   };
 
-  console.log(JSON.stringify(userData));
-
   return (
     <>
       <StatusBar
