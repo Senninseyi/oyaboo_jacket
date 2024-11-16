@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput, TextInputProps } from "react-native-paper";
 
@@ -7,7 +7,7 @@ import AppColorConstants from "../../constants/app_color_constants";
 
 interface AppTextInputProp extends TextInputProps {
   label?: string;
-  errorMessage?: any;
+  errorMessage?: string | any;
   textInputStyle?: object;
 }
 
@@ -79,5 +79,9 @@ const style = StyleSheet.create({
     fontWeight: "500",
     lineHeight: 19.6,
     color: AppColorConstants.app_dark,
+  },
+
+  focusedInput: {
+    borderColor: AppColorConstants.app_dark,
   },
 });

@@ -17,6 +17,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks/hooks";
 import { MembershipValidationSchema } from "../schema/schema";
 import { setRegisterationTabs } from "../redux/slices/appSlice";
 import AppService from "../services/app.service";
+import { err } from "react-native-svg";
 
 interface InitialState {
   temporary_registeration_id: string;
@@ -70,6 +71,10 @@ function JacketAllocationScreen(): JSX.Element {
   const [loading, setLoading] = useState<boolean>();
   const dispatch = useAppDispatch();
   const [userData, setUserData] = useState<SecurityData | null>(null);
+  const [errors, setShowErrors] = useState<InitialState>({
+    temporary_registeration_id: "",
+    security_id: "",
+  });
 
   const form: InitialState = {
     temporary_registeration_id: "",
@@ -83,13 +88,36 @@ function JacketAllocationScreen(): JSX.Element {
     };
 
     setLoading(true);
-    const data: SecurityData = await AppService.addSecurityIDToMember(payload);
-    if (data) {
-      setUserData(data);
-      setLoading(false);
-      dispatch(setRegisterationTabs(2));
-    } else {
-      setLoading(false);
+    const data: SecurityData | any = await AppService.addSecurityIDToMember(
+      payload
+    );
+    console.log(data);
+    setLoading(false);
+    switch (data?.status) {
+      case "400":
+        if (data?.message?.includes("Security")) {
+          formik.setFieldTouched("security_id", true);
+          formik.setFieldError("security_id", data?.message);
+          setShowErrors({
+            temporary_registeration_id: "",
+            security_id: data?.message,
+          });
+        } else {
+          formik.setFieldTouched("temporary_registeration_id", true);
+          formik.setFieldError("temporary_registeration_id", data?.message);
+          setShowErrors({
+            temporary_registeration_id: data?.message,
+            security_id: "",
+          });
+        }
+        break;
+      case "404":
+        formik.setFieldError("security_id", data?.message);
+        break;
+      default:
+        setUserData(data);
+        dispatch(setRegisterationTabs(2));
+        break;
     }
   };
 
@@ -120,6 +148,8 @@ function JacketAllocationScreen(): JSX.Element {
       setLoading(false);
     }
   };
+
+  console.log(JSON.stringify(userData));
 
   return (
     <>
@@ -175,9 +205,17 @@ function JacketAllocationScreen(): JSX.Element {
                   <View style={{ gap: 25 }}>
                     <AppTextInput
                       label="Member ID"
-                      onChangeText={formik.handleChange(
-                        "temporary_registeration_id"
-                      )}
+                      onChangeText={(text) => {
+                        formik.setFieldValue(
+                          "temporary_registeration_id",
+                          text
+                        );
+                        setShowErrors({
+                          ...errors,
+                          temporary_registeration_id: "",
+                          security_id: "",
+                        });
+                      }}
                       value={formik.values.temporary_registeration_id}
                       onBlur={formik.handleBlur("temporary_registeration_id")}
                       placeholder="Enter a Member's ID"
@@ -185,8 +223,9 @@ function JacketAllocationScreen(): JSX.Element {
                         formik.errors.temporary_registeration_id &&
                         formik.touched.temporary_registeration_id
                           ? formik.errors.temporary_registeration_id
-                          : null
+                          : errors.temporary_registeration_id
                       }
+                      autoFocus={true}
                       inputMode="numeric"
                       maxLength={8}
                       keyboardType="numeric"
@@ -210,8 +249,16 @@ function JacketAllocationScreen(): JSX.Element {
                             "security_id",
                             `${formatted.slice(0, 2)}-${formatted.slice(2)}`
                           );
+                          setShowErrors({
+                            ...errors,
+                            security_id: "",
+                          });
                         } else {
                           formik.setFieldValue("security_id", formatted);
+                          setShowErrors({
+                            ...errors,
+                            security_id: "",
+                          });
                         }
                       }}
                       value={formik.values.security_id}
@@ -220,7 +267,7 @@ function JacketAllocationScreen(): JSX.Element {
                       errorMessage={
                         formik.errors.security_id && formik.touched.security_id
                           ? formik.errors.security_id
-                          : null
+                          : errors.security_id
                       }
                       inputMode="text"
                       keyboardType="name-phone-pad"
@@ -253,7 +300,11 @@ function JacketAllocationScreen(): JSX.Element {
                     style={{ width: "100%", gap: 30, alignItems: "center" }}
                   >
                     <Image
-                      source={require("../assets/png/default.png")}
+                      source={
+                        userData?.photoReference === null
+                          ? require("../assets/png/default.png")
+                          : { uri: userData?.photoReference }
+                      }
                       style={style.avatar}
                     />
                     <View style={style.detailsContainer}>

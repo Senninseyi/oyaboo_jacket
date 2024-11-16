@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import OYABOO from "../helpers/axios";
 
 const AppService = {
@@ -5,8 +6,8 @@ const AppService = {
     try {
       const response = await OYABOO.patch("/members/assign/securityId", param);
       return response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (error: AxiosError | any) {
+      return error?.response.data;
     }
   },
   allocateJacket: async (param: any) => {

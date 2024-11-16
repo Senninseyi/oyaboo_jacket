@@ -1,14 +1,15 @@
-import OYABOO from '../helpers/axios';
+import { AxiosError, AxiosResponse } from "axios";
+import OYABOO from "../helpers/axios";
 
 const AuthService = {
   login: async (param: any) => {
     try {
-      const response = await OYABOO.post('/authenticate', param);
+      const response: AxiosResponse = await OYABOO.post("/authenticate", param);
       return response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (error: AxiosError | any) {
+      return error?.response.data;
     }
   },
 };
 
-export default AuthService
+export default AuthService;
