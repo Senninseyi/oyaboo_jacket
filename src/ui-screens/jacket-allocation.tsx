@@ -174,12 +174,12 @@ function JacketAllocationScreen(): JSX.Element {
           <View>
             <View style={{ gap: 10, alignItems: "center" }}>
               <Image
-                source={require("../assets/png/oyo_state_logo.png")}
+                source={require("../assets/png/kaduna_state_logo.jpg")}
                 style={style.oyo}
                 contentFit="contain"
               />
               <AppText
-                text="Oyo State Motorcycle Tricycle Taxi Security & Welfare Scheme"
+                text="Kaduna State Motorcycle Tricycle Taxi Security & Welfare Scheme"
                 style={style.maintitle}
               />
             </View>
