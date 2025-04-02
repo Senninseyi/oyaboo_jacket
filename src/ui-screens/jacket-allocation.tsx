@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { Platform, StatusBar, StyleSheet, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFormik } from "formik";
@@ -74,7 +74,6 @@ function JacketAllocationScreen(): JSX.Element {
     temporary_registeration_id: "",
     security_id: "",
   });
-
   const form: InitialState = {
     temporary_registeration_id: "",
     security_id: "",
@@ -101,12 +100,24 @@ function JacketAllocationScreen(): JSX.Element {
             security_id: data?.message,
           });
         } else {
-          formik.setFieldTouched("temporary_registeration_id", true);
-          formik.setFieldError("temporary_registeration_id", data?.message);
-          setShowErrors({
-            temporary_registeration_id: data?.message,
-            security_id: "",
-          });
+          if (data?.message.includes("Member not found")) {
+            formik.setFieldTouched("temporary_registeration_id", true);
+            formik.setFieldError(
+              "temporary_registeration_id",
+              "Member ID does not exist"
+            );
+            setShowErrors({
+              temporary_registeration_id: "Member ID does not exist",
+              security_id: "",
+            });
+          } else {
+            formik.setFieldTouched("temporary_registeration_id", true);
+            formik.setFieldError("temporary_registeration_id", data?.message);
+            setShowErrors({
+              temporary_registeration_id: data?.message,
+              security_id: "",
+            });
+          }
         }
         break;
       case "404":
@@ -163,12 +174,12 @@ function JacketAllocationScreen(): JSX.Element {
           <View>
             <View style={{ gap: 10, alignItems: "center" }}>
               <Image
-                source={require("../assets/png/oyo_state_logo.png")}
+                source={require("../assets/png/kaduna_state_logo.jpg")}
                 style={style.oyo}
                 contentFit="contain"
               />
               <AppText
-                text="Oyo State Motorcycle Tricycle Taxi Security & Welfare Scheme"
+                text="Kaduna State Motorcycle Tricycle Taxi Security & Welfare Scheme"
                 style={style.maintitle}
               />
             </View>
