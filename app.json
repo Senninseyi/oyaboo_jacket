@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "oyaboo_jacket",
-    "slug": "oy-aboo-jacket",
+    "name": "kaduna-jacket",
+    "slug": "kaduna-jacket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,14 +13,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.oyaboo.jacket"
+      "bundleIdentifier": "com.kaduna.jacket"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.oyaboo.jacket"
+      "package": "com.kaduna.jacket"
     },
     "web": {
       "favicon": "./assets/favicon.png"
